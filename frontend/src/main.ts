@@ -4,11 +4,17 @@ import { GameEngine } from './game/GameEngine';
 import { Renderer } from './game/Renderer';
 import { MenuScreen } from './ui/MenuScreen';
 import { GameOverScreen } from './ui/GameOverScreen';
-import { HighscoreScreen } from './ui/HighscoreScreen';
-import { getHighscores, postHighscore } from './api/HighscoreApi';
+import { HighscorePanel } from './ui/HighscorePanel';
+import { postHighscore } from './api/HighscoreApi';
 
 function main(): void {
   const app = document.getElementById('app')!;
+
+  const mainContent = document.createElement('div');
+  mainContent.id = 'main-content';
+  app.appendChild(mainContent);
+
+  const panel = new HighscorePanel(app);
 
   let engine: GameEngine | null = null;
   let currentMode: GameMode = 'standard';
@@ -16,22 +22,19 @@ function main(): void {
   let pendingLevel = 0;
   let pendingLines = 0;
 
-  // Canvas-Wrapper
   const gameWrapper = document.createElement('div');
   gameWrapper.className = 'screen';
   const canvas = document.createElement('canvas');
   gameWrapper.appendChild(canvas);
-  app.appendChild(gameWrapper);
+  mainContent.appendChild(gameWrapper);
 
-  const menuScreen = new MenuScreen(app, startGame);
-  const gameOverScreen = new GameOverScreen(app, onNameSubmit, showMenu);
-  const highscoreScreen = new HighscoreScreen(app, showMenu);
+  const menuScreen = new MenuScreen(mainContent, startGame);
+  const gameOverScreen = new GameOverScreen(mainContent, onNameSubmit, showMenu);
 
   function hideAll(): void {
     gameWrapper.style.display = 'none';
     menuScreen.hide();
     gameOverScreen.hide();
-    highscoreScreen.hide();
   }
 
   function showMenu(): void {
@@ -45,6 +48,7 @@ function main(): void {
     currentMode = mode;
     hideAll();
     gameWrapper.style.display = 'flex';
+    panel.refreshMode(mode);
 
     const renderer = new Renderer(canvas, mode);
 
@@ -73,21 +77,13 @@ function main(): void {
         mode: currentMode,
       });
     } catch {
-      // Highscore-Speichern fehlgeschlagen – trotzdem Highscore-Liste zeigen
+      // Speichern fehlgeschlagen – trotzdem zum Menü
     }
-    await showHighscores();
+    await panel.refreshMode(currentMode);
+    showMenu();
   }
 
-  async function showHighscores(): Promise<void> {
-    try {
-      const entries = await getHighscores(currentMode);
-      hideAll();
-      highscoreScreen.show(entries, currentMode);
-    } catch {
-      showMenu();
-    }
-  }
-
+  panel.refreshAll();
   showMenu();
 }
 
