@@ -5,24 +5,24 @@ import { getHighscores } from '../api/HighscoreApi';
 const MODES: GameMode[] = ['standard', 'mittel', 'schwer'];
 
 export class HighscorePanel {
-  private readonly sections: Map<GameMode, HTMLElement> = new Map();
+  private readonly lists: Map<GameMode, HTMLElement> = new Map();
 
   constructor(container: HTMLElement) {
-    const el = document.createElement('div');
-    el.className = 'highscore-panel';
+    const row = document.createElement('div');
+    row.id = 'highscore-row';
 
     for (const mode of MODES) {
-      const section = document.createElement('div');
-      section.className = 'panel-section';
-      section.innerHTML = `
-        <h3 class="panel-mode-heading">${MODE_CONFIGS[mode].label}</h3>
-        <ol class="panel-list"></ol>
+      const box = document.createElement('div');
+      box.className = 'highscore-box';
+      box.innerHTML = `
+        <h3 class="highscore-box-heading">${MODE_CONFIGS[mode].label}</h3>
+        <ol class="highscore-box-list"></ol>
       `;
-      el.appendChild(section);
-      this.sections.set(mode, section.querySelector('.panel-list')!);
+      row.appendChild(box);
+      this.lists.set(mode, box.querySelector('.highscore-box-list')!);
     }
 
-    container.appendChild(el);
+    container.appendChild(row);
   }
 
   async refreshAll(): Promise<void> {
@@ -30,12 +30,12 @@ export class HighscorePanel {
   }
 
   async refreshMode(mode: GameMode): Promise<void> {
-    const listEl = this.sections.get(mode)!;
+    const listEl = this.lists.get(mode)!;
     try {
       const entries = await getHighscores(mode);
       this.render(listEl, entries);
     } catch {
-      listEl.innerHTML = '<li class="panel-empty">–</li>';
+      listEl.innerHTML = '<li class="highscore-box-empty">–</li>';
     }
   }
 
@@ -43,14 +43,14 @@ export class HighscorePanel {
     listEl.innerHTML = '';
     if (entries.length === 0) {
       const li = document.createElement('li');
-      li.className = 'panel-empty';
+      li.className = 'highscore-box-empty';
       li.textContent = 'Keine Einträge';
       listEl.appendChild(li);
       return;
     }
     entries.slice(0, 10).forEach((entry) => {
       const li = document.createElement('li');
-      li.innerHTML = `<span class="panel-name">${entry.playerName}</span><span class="panel-score">${entry.score.toLocaleString('de-DE')}</span>`;
+      li.innerHTML = `<span class="highscore-box-name">${entry.playerName}</span><span class="highscore-box-score">${entry.score.toLocaleString('de-DE')}</span>`;
       listEl.appendChild(li);
     });
   }

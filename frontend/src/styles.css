@@ -10,22 +10,30 @@ body {
   font-family: 'Courier New', Courier, monospace;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 #app {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   gap: 24px;
+  padding: 24px 0;
 }
 
 #main-content {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+#highscore-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: flex-start;
 }
 
 canvas {
@@ -155,42 +163,33 @@ canvas {
   min-height: 16px;
 }
 
-/* ---- Highscore-Panel (dauerhaft sichtbar) ---- */
+/* ---- Highscore-Kästen (dauerhaft sichtbar, je Modus ein Kasten) ---- */
 
-.highscore-panel {
-  width: 210px;
+.highscore-box {
+  width: 200px;
   border: 1px solid #1e1e1e;
   background: #0d0d0d;
-  align-self: stretch;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  padding: 14px 12px;
 }
 
-.panel-section {
-  padding: 12px 12px 8px;
-  border-bottom: 1px solid #1e1e1e;
-}
-
-.panel-section:last-child {
-  border-bottom: none;
-}
-
-.panel-mode-heading {
+.highscore-box-heading {
   color: #00f0f0;
   font-size: 11px;
   letter-spacing: 3px;
-  margin-bottom: 8px;
   text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #1e1e1e;
 }
 
-.panel-list {
+.highscore-box-list {
   list-style: decimal;
   padding-left: 20px;
   font-size: 11px;
 }
 
-.panel-list li {
+.highscore-box-list li {
   display: flex;
   justify-content: space-between;
   gap: 6px;
@@ -198,20 +197,20 @@ canvas {
   border-bottom: 1px solid #141414;
 }
 
-.panel-list li:last-child {
+.highscore-box-list li:last-child {
   border-bottom: none;
 }
 
-.panel-name {
+.highscore-box-name {
   color: #777;
 }
 
-.panel-score {
+.highscore-box-score {
   color: #bbb;
   text-align: right;
 }
 
-.panel-empty {
+.highscore-box-empty {
   list-style: none;
   padding-left: 0;
   color: #333;
