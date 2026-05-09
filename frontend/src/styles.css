@@ -31,6 +31,20 @@ body {
 
 #highscore-row {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.highscore-row-heading {
+  color: #00f0f0;
+  font-size: 20px;
+  letter-spacing: 8px;
+  text-shadow: 0 0 10px #00f0f040;
+}
+
+.highscore-boxes {
+  display: flex;
   flex-direction: row;
   gap: 16px;
   align-items: flex-start;

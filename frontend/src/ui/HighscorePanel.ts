@@ -11,6 +11,15 @@ export class HighscorePanel {
     const row = document.createElement('div');
     row.id = 'highscore-row';
 
+    const heading = document.createElement('h2');
+    heading.className = 'highscore-row-heading';
+    heading.textContent = 'HIGHSCORES';
+    row.appendChild(heading);
+
+    const boxes = document.createElement('div');
+    boxes.className = 'highscore-boxes';
+    row.appendChild(boxes);
+
     for (const mode of MODES) {
       const box = document.createElement('div');
       box.className = 'highscore-box';
@@ -18,7 +27,7 @@ export class HighscorePanel {
         <h3 class="highscore-box-heading">${MODE_CONFIGS[mode].label}</h3>
         <ol class="highscore-box-list"></ol>
       `;
-      row.appendChild(box);
+      boxes.appendChild(box);
       this.lists.set(mode, box.querySelector('.highscore-box-list')!);
     }
 
