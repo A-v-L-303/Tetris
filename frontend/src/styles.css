@@ -159,50 +159,55 @@ canvas {
 
 .highscore-panel {
   width: 210px;
-  padding: 16px 12px;
   border: 1px solid #1e1e1e;
   background: #0d0d0d;
   align-self: stretch;
-  min-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-.panel-heading {
+.panel-section {
+  padding: 12px 12px 8px;
+  border-bottom: 1px solid #1e1e1e;
+}
+
+.panel-section:last-child {
+  border-bottom: none;
+}
+
+.panel-mode-heading {
   color: #00f0f0;
-  font-size: 13px;
-  letter-spacing: 4px;
-  text-align: center;
-  margin-bottom: 4px;
-}
-
-.panel-mode {
-  color: #444;
   font-size: 11px;
-  text-align: center;
-  margin-bottom: 14px;
-  letter-spacing: 1px;
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
 }
 
 .panel-list {
   list-style: decimal;
-  padding-left: 22px;
-  font-size: 12px;
-  line-height: 1;
+  padding-left: 20px;
+  font-size: 11px;
 }
 
 .panel-list li {
   display: flex;
   justify-content: space-between;
   gap: 6px;
-  padding: 4px 0;
-  border-bottom: 1px solid #151515;
+  padding: 3px 0;
+  border-bottom: 1px solid #141414;
+}
+
+.panel-list li:last-child {
+  border-bottom: none;
 }
 
 .panel-name {
-  color: #888;
+  color: #777;
 }
 
 .panel-score {
-  color: #ccc;
+  color: #bbb;
   text-align: right;
 }
 
@@ -212,5 +217,4 @@ canvas {
   color: #333;
   font-size: 11px;
   text-align: center;
-  padding-top: 8px;
 }

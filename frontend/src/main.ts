@@ -48,7 +48,7 @@ function main(): void {
     currentMode = mode;
     hideAll();
     gameWrapper.style.display = 'flex';
-    panel.refresh(mode);
+    panel.refreshMode(mode);
 
     const renderer = new Renderer(canvas, mode);
 
@@ -79,11 +79,11 @@ function main(): void {
     } catch {
       // Speichern fehlgeschlagen – trotzdem zum Menü
     }
-    await panel.refresh(currentMode);
+    await panel.refreshMode(currentMode);
     showMenu();
   }
 
-  panel.refresh('standard');
+  panel.refreshAll();
   showMenu();
 }
 
