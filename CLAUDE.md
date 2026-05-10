@@ -18,6 +18,11 @@ Anrede: Duzen
 - für jede neue aufgabe wird ein neuer branch erzeugt
 - es wird immer in Forgejo commited, nicht lokal
 
+## Server-Lifecycle
+- Claude startet und stoppt alle Dev-Server selbst
+- der User greift dafür nie manuell ein
+- nach Abschluss einer Aufgabe werden laufende Server gestoppt
+
 ## Authors
 - Alexander von Linden
 
