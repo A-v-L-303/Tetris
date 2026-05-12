@@ -4,6 +4,7 @@ import type { ActiveTetromino, TetrominoType } from './Tetromino';
 import { randomType } from './Tetromino';
 import type { Grid } from './Board';
 import { clearLines, createGrid, isValidPosition, lockPiece } from './Board';
+import { SoundManager } from './SoundManager';
 
 export interface GameState {
   grid: Grid;
@@ -65,6 +66,8 @@ export class GameEngine {
   private animationId = 0;
   private lastTime = 0;
   private running = false;
+
+  private readonly soundManager = new SoundManager();
 
   private readonly onStateUpdate: (state: GameState) => void;
   private readonly onGameOver: (score: number, level: number, lines: number) => void;
@@ -176,6 +179,7 @@ export class GameEngine {
     lockPiece(this.grid, this.current);
     const cleared = clearLines(this.grid);
     if (cleared > 0) {
+      this.soundManager.playLineClear(cleared);
       this.score += SCORE_TABLE[cleared] * (this.level + 1);
       this.lines += cleared;
       this.level = Math.floor(this.lines / 10);
@@ -250,6 +254,7 @@ export class GameEngine {
 
   private readonly onKeyDown = (e: KeyboardEvent): void => {
     if (e.repeat) return;
+    this.soundManager.unlock();
     switch (e.code) {
       case 'ArrowLeft':
         e.preventDefault();
