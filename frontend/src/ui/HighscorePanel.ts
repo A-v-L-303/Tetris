@@ -7,9 +7,12 @@ const MODES: GameMode[] = ['standard', 'mittel', 'schwer'];
 export class HighscorePanel {
   private readonly lists: Map<GameMode, HTMLElement> = new Map();
 
+  private readonly row: HTMLElement;
+
   constructor(container: HTMLElement) {
     const row = document.createElement('div');
     row.id = 'highscore-row';
+    this.row = row;
 
     const heading = document.createElement('h2');
     heading.className = 'highscore-row-heading';
@@ -32,6 +35,14 @@ export class HighscorePanel {
     }
 
     container.appendChild(row);
+  }
+
+  show(): void {
+    this.row.style.display = '';
+  }
+
+  hide(): void {
+    this.row.style.display = 'none';
   }
 
   async refreshAll(): Promise<void> {

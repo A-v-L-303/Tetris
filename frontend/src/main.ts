@@ -41,12 +41,14 @@ function main(): void {
     engine?.stop();
     engine = null;
     hideAll();
+    panel.show();
     menuScreen.show();
   }
 
   function startGame(mode: GameMode): void {
     currentMode = mode;
     hideAll();
+    panel.hide();
     gameWrapper.style.display = 'flex';
     panel.refreshMode(mode);
 
