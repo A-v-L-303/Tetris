@@ -14,6 +14,7 @@ export class Renderer {
   private readonly cellSize: number;
   private readonly cols: number;
   private readonly rows: number;
+  private readonly boardOffsetX: number;
   private readonly boardWidth: number;
   private readonly sidebarX: number;
 
@@ -23,9 +24,10 @@ export class Renderer {
     this.cols = config.cols;
     this.rows = config.rows;
     this.boardWidth = this.cols * this.cellSize;
-    this.sidebarX = this.boardWidth + SIDEBAR_GAP;
+    this.boardOffsetX = SIDEBAR_WIDTH + SIDEBAR_GAP;
+    this.sidebarX = this.boardOffsetX + this.boardWidth + SIDEBAR_GAP;
 
-    canvas.width = this.boardWidth + SIDEBAR_GAP + SIDEBAR_WIDTH;
+    canvas.width = SIDEBAR_WIDTH + SIDEBAR_GAP + this.boardWidth + SIDEBAR_GAP + SIDEBAR_WIDTH;
     canvas.height = this.rows * this.cellSize;
 
     this.ctx = canvas.getContext('2d')!;
@@ -40,30 +42,31 @@ export class Renderer {
     this.drawLockedCells(state.grid);
     this.drawGhost(state);
     this.drawCurrentPiece(state);
+    this.drawHoldSidebar(state);
     this.drawSidebar(state);
   }
 
   private drawGrid(): void {
-    const { ctx, cellSize, cols, rows } = this;
+    const { ctx, cellSize, cols, rows, boardOffsetX } = this;
     ctx.strokeStyle = '#1c1c1c';
     ctx.lineWidth = 0.5;
 
     for (let r = 0; r <= rows; r++) {
       ctx.beginPath();
-      ctx.moveTo(0, r * cellSize);
-      ctx.lineTo(cols * cellSize, r * cellSize);
+      ctx.moveTo(boardOffsetX, r * cellSize);
+      ctx.lineTo(boardOffsetX + cols * cellSize, r * cellSize);
       ctx.stroke();
     }
     for (let c = 0; c <= cols; c++) {
       ctx.beginPath();
-      ctx.moveTo(c * cellSize, 0);
-      ctx.lineTo(c * cellSize, rows * cellSize);
+      ctx.moveTo(boardOffsetX + c * cellSize, 0);
+      ctx.lineTo(boardOffsetX + c * cellSize, rows * cellSize);
       ctx.stroke();
     }
 
     ctx.strokeStyle = '#555';
     ctx.lineWidth = 2;
-    ctx.strokeRect(0, 0, cols * cellSize, rows * cellSize);
+    ctx.strokeRect(boardOffsetX, 0, cols * cellSize, rows * cellSize);
   }
 
   private drawLockedCells(grid: Grid): void {
@@ -78,8 +81,8 @@ export class Renderer {
   }
 
   private drawCell(col: number, row: number, color: string, alpha: number): void {
-    const { ctx, cellSize } = this;
-    const x = col * cellSize + 1;
+    const { ctx, cellSize, boardOffsetX } = this;
+    const x = boardOffsetX + col * cellSize + 1;
     const y = row * cellSize + 1;
     const size = cellSize - 2;
 
@@ -125,6 +128,21 @@ export class Renderer {
     }
   }
 
+  private drawHoldSidebar(state: GameState): void {
+    const { ctx } = this;
+    const x = 12;
+    let y = 20;
+
+    ctx.fillStyle = '#888';
+    ctx.font = '11px "Courier New"';
+    ctx.fillText('HOLD', x, y);
+    y += 8;
+
+    if (state.held !== null) {
+      this.drawPreview(x, y, state.held);
+    }
+  }
+
   private drawSidebar(state: GameState): void {
     const { ctx, sidebarX } = this;
     const x = sidebarX + 12;
@@ -153,10 +171,9 @@ export class Renderer {
     this.drawValue(x, y, String(state.lines));
     y += 40;
 
-    // Steuerung
     ctx.fillStyle = '#777';
     ctx.font = '12px "Courier New"';
-    const controls = ['← → Bewegen', '↑/X Drehen', 'Z Gegenuhr', '↓ Soft Drop', 'SPC Hard Drop'];
+    const controls = ['← → Bewegen', '↑/X Drehen', 'Z Gegenuhr', '↓ Soft Drop', 'SPC Hard Drop', 'C Hold'];
     for (const line of controls) {
       ctx.fillText(line, x, y);
       y += 14;
