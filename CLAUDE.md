@@ -36,3 +36,4 @@ Anrede: Duzen
 - Emojies verwenden
 - lange Antworten
 - keine Abkürzungen verwenden im Naming
+- Pull Requests erstellen oder Branches pushen ohne explizite Aufforderung
