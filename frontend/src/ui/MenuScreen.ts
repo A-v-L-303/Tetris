@@ -19,6 +19,7 @@ export class MenuScreen {
         <span>Z Gegenuhrzeigersinn</span>
         <span>↓ Soft Drop</span>
         <span>Leertaste Hard Drop</span>
+        <span>C Hold</span>
       </div>
     `;
     container.appendChild(this.el);
