@@ -1,15 +1,11 @@
-interface ScheduledNote {
-  freq: number;
-  startOffset: number;
-  duration: number;
-}
-
 export class SoundManager {
   private context: AudioContext | null = null;
+  private pulseWave: PeriodicWave | null = null;
 
   private getContext(): AudioContext {
     if (!this.context) {
       this.context = new AudioContext();
+      this.pulseWave = this.buildPulseWave(this.context, 0.25);
     }
     if (this.context.state === 'suspended') {
       void this.context.resume();
@@ -23,40 +19,74 @@ export class SoundManager {
 
   playLineClear(lines: number): void {
     const ctx = this.getContext();
-    const now = ctx.currentTime;
-    for (const note of this.notesForLines(lines)) {
-      this.playSquareNote(ctx, note.freq, now + note.startOffset, note.duration);
-    }
-  }
-
-  private notesForLines(lines: number): ScheduledNote[] {
-    // NES Tetris: kurze aufsteigende Arpeggio-Folge, bei Tetris (4 Reihen) länger
-    const sweepNotes: ScheduledNote[] = [
-      { freq: 523.25, startOffset: 0.00, duration: 0.07 },
-      { freq: 659.25, startOffset: 0.07, duration: 0.07 },
-      { freq: 783.99, startOffset: 0.14, duration: 0.07 },
-      { freq: 1046.50, startOffset: 0.21, duration: 0.14 },
-    ];
     if (lines >= 4) {
-      return sweepNotes;
+      this.playTetris(ctx);
+    } else {
+      this.playSweep(ctx, lines);
     }
-    return sweepNotes.slice(0, lines);
   }
 
-  private playSquareNote(ctx: AudioContext, frequency: number, startTime: number, duration: number): void {
-    const oscillator = ctx.createOscillator();
+  // NES Tetris 1-3 Reihen: kurzer absteigender Frequenz-Sweep
+  private playSweep(ctx: AudioContext, lines: number): void {
+    const now = ctx.currentTime;
+    const startFreq = 440 * Math.pow(2, (lines - 1) * 0.5); // je mehr Reihen, desto höher
+    const endFreq = startFreq * 0.5;
+    const duration = 0.08 + lines * 0.02;
+
+    const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    oscillator.type = 'square';
-    oscillator.frequency.setValueAtTime(frequency, startTime);
+    osc.setPeriodicWave(this.pulseWave!);
+    osc.frequency.setValueAtTime(startFreq, now);
+    osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
 
-    gain.gain.setValueAtTime(0.12, startTime);
+    gain.gain.setValueAtTime(0.18, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + duration);
+  }
+
+  // NES Tetris 4 Reihen: aufsteigende Arpeggio-Fanfare (E-G-B-E)
+  private playTetris(ctx: AudioContext): void {
+    const now = ctx.currentTime;
+    const notes = [659.25, 783.99, 987.77, 1318.51]; // E5, G5, B5, E6
+    const stepDuration = 0.07;
+
+    notes.forEach((freq, i) => {
+      const t = now + i * stepDuration;
+      const duration = i === notes.length - 1 ? 0.22 : stepDuration;
+      this.playPulseNote(ctx, freq, t, duration);
+    });
+  }
+
+  private playPulseNote(ctx: AudioContext, freq: number, startTime: number, duration: number): void {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.setPeriodicWave(this.pulseWave!);
+    osc.frequency.setValueAtTime(freq, startTime);
+
+    gain.gain.setValueAtTime(0.18, startTime);
     gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
 
-    oscillator.connect(gain);
+    osc.connect(gain);
     gain.connect(ctx.destination);
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+  }
 
-    oscillator.start(startTime);
-    oscillator.stop(startTime + duration);
+  // 25%-Duty-Cycle-Pulswelle wie NES APU Pulse-Kanal
+  // Fourier: real[n] = (2/(nπ)) * sin(nπd), d = 0.25
+  private buildPulseWave(ctx: AudioContext, duty: number): PeriodicWave {
+    const harmonics = 64;
+    const real = new Float32Array(harmonics);
+    const imag = new Float32Array(harmonics);
+    for (let n = 1; n < harmonics; n++) {
+      real[n] = (2 / (n * Math.PI)) * Math.sin(Math.PI * n * duty);
+    }
+    return ctx.createPeriodicWave(real, imag);
   }
 }
