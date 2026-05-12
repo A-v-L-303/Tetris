@@ -9,6 +9,7 @@ export interface GameState {
   grid: Grid;
   current: ActiveTetromino;
   next: TetrominoType;
+  held: TetrominoType | null;
   score: number;
   level: number;
   lines: number;
@@ -47,6 +48,9 @@ export class GameEngine {
   private score = 0;
   private level = 0;
   private lines = 0;
+
+  private held: TetrominoType | null = null;
+  private holdUsed = false;
 
   private readonly cols: number;
   private readonly rows: number;
@@ -183,11 +187,39 @@ export class GameEngine {
   private spawnPiece(): void {
     const type = this.next;
     this.next = randomType();
+    this.holdUsed = false;
 
     const spawnX = Math.floor((this.cols - SPAWN_WIDTH[type]) / 2);
     const spawnY = type === 'I' ? -1 : 0;
 
     this.current = { type, rotation: 0, x: spawnX, y: spawnY };
+
+    if (!isValidPosition(this.grid, this.current.type, this.current.rotation, this.current.x, this.current.y)) {
+      this.stop();
+      this.onGameOver(this.score, this.level, this.lines);
+    }
+  }
+
+  private holdPiece(): void {
+    if (this.holdUsed) return;
+    this.holdUsed = true;
+
+    const currentType = this.current.type;
+    let newType: TetrominoType;
+
+    if (this.held === null) {
+      newType = this.next;
+      this.next = randomType();
+    } else {
+      newType = this.held;
+    }
+
+    this.held = currentType;
+
+    const spawnX = Math.floor((this.cols - SPAWN_WIDTH[newType]) / 2);
+    const spawnY = newType === 'I' ? -1 : 0;
+    this.current = { type: newType, rotation: 0, x: spawnX, y: spawnY };
+    this.dropAccumulator = 0;
 
     if (!isValidPosition(this.grid, this.current.type, this.current.rotation, this.current.x, this.current.y)) {
       this.stop();
@@ -208,6 +240,7 @@ export class GameEngine {
       grid: this.grid,
       current: this.current,
       next: this.next,
+      held: this.held,
       score: this.score,
       level: this.level,
       lines: this.lines,
@@ -242,6 +275,9 @@ export class GameEngine {
         break;
       case 'KeyZ':
         this.tryRotate(-1);
+        break;
+      case 'KeyC':
+        this.holdPiece();
         break;
       case 'Space':
         e.preventDefault();
