@@ -5,9 +5,9 @@ import type { TetrominoType } from './Tetromino';
 import type { Grid } from './Board';
 import type { GameState } from './GameEngine';
 
-const SIDEBAR_WIDTH = 160;
+const SIDEBAR_WIDTH = 180;
 const SIDEBAR_GAP = 8;
-const PREVIEW_CELL = 18;
+const PREVIEW_CELL = 26;
 
 export class Renderer {
   private readonly ctx: CanvasRenderingContext2D;
@@ -130,8 +130,8 @@ export class Renderer {
     const x = sidebarX + 12;
     let y = 20;
 
-    ctx.fillStyle = '#888';
-    ctx.font = '11px "Courier New"';
+    ctx.fillStyle = '#aaa';
+    ctx.font = '14px "Courier New"';
     ctx.fillText('NEXT', x, y);
     y += 8;
 
@@ -154,8 +154,8 @@ export class Renderer {
     y += 40;
 
     // Steuerung
-    ctx.fillStyle = '#444';
-    ctx.font = '10px "Courier New"';
+    ctx.fillStyle = '#777';
+    ctx.font = '12px "Courier New"';
     const controls = ['← → Bewegen', '↑/X Drehen', 'Z Gegenuhr', '↓ Soft Drop', 'SPC Hard Drop'];
     for (const line of controls) {
       ctx.fillText(line, x, y);
@@ -164,14 +164,14 @@ export class Renderer {
   }
 
   private drawLabel(x: number, y: number, text: string): void {
-    this.ctx.fillStyle = '#666';
-    this.ctx.font = '11px "Courier New"';
+    this.ctx.fillStyle = '#999';
+    this.ctx.font = '14px "Courier New"';
     this.ctx.fillText(text, x, y);
   }
 
   private drawValue(x: number, y: number, text: string): void {
     this.ctx.fillStyle = '#fff';
-    this.ctx.font = 'bold 17px "Courier New"';
+    this.ctx.font = 'bold 22px "Courier New"';
     this.ctx.fillText(text, x, y);
   }
 
