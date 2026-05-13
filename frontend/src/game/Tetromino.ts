@@ -68,6 +68,18 @@ export function getShape(type: TetrominoType, rotation: number): number[][] {
 
 const ALL_TYPES: TetrominoType[] = ['I', 'O', 'T', 'J', 'L', 'S', 'Z'];
 
-export function randomType(): TetrominoType {
-  return ALL_TYPES[Math.floor(Math.random() * ALL_TYPES.length)];
+export class SevenBag {
+  private bag: TetrominoType[] = [];
+
+  next(): TetrominoType {
+    if (this.bag.length === 0) {
+      this.bag = [...ALL_TYPES];
+      // Fisher-Yates-Shuffle
+      for (let i = this.bag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [this.bag[i], this.bag[j]] = [this.bag[j], this.bag[i]];
+      }
+    }
+    return this.bag.pop()!;
+  }
 }
