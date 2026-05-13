@@ -1,6 +1,7 @@
 # Tetris
 
 Browser-basiertes Tetris mit drei Spielmodi, persistenten Highscores und NES-authentischer Spielmechanik.
+Dieses Spiel wurde vollständig mit Claude Code geplant und implementiert.
 
 ## Tech-Stack
 
