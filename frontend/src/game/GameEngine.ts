@@ -1,7 +1,7 @@
 import type { GameMode } from '../types';
 import { MODE_CONFIGS } from '../types';
 import type { ActiveTetromino, TetrominoType } from './Tetromino';
-import { randomType } from './Tetromino';
+import { SevenBag } from './Tetromino';
 import type { Grid } from './Board';
 import { clearLines, createGrid, isValidPosition, lockPiece } from './Board';
 import { SoundManager } from './SoundManager';
@@ -46,6 +46,7 @@ export class GameEngine {
   private grid: Grid;
   private current!: ActiveTetromino;
   private next: TetrominoType;
+  private readonly bag = new SevenBag();
   private score = 0;
   private level = 0;
   private lines = 0;
@@ -83,7 +84,7 @@ export class GameEngine {
     this.cols = config.cols;
     this.rows = config.rows;
     this.grid = createGrid(this.rows, this.cols);
-    this.next = randomType();
+    this.next = this.bag.next();
   }
 
   start(): void {
@@ -190,7 +191,7 @@ export class GameEngine {
 
   private spawnPiece(): void {
     const type = this.next;
-    this.next = randomType();
+    this.next = this.bag.next();
     this.holdUsed = false;
 
     const spawnX = Math.floor((this.cols - SPAWN_WIDTH[type]) / 2);
@@ -213,7 +214,7 @@ export class GameEngine {
 
     if (this.held === null) {
       newType = this.next;
-      this.next = randomType();
+      this.next = this.bag.next();
     } else {
       newType = this.held;
     }
