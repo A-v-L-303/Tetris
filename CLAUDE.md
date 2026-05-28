@@ -17,8 +17,9 @@ Anrede: Duzen
 ## Regeln
 Wenn du eine neue Aufgabe im Projekt startest musst Du diese Regeln beachten:
 1. für jede neue aufgabe wird IMMER ein neuer branch erzeugt
-2. es wird immer in Forgejo commited, nicht lokal, anschliessend einen Pull Request erstellen
-3. Server-Lifecycle:
+2. Author für deine Commits: Claude
+3. es wird immer in Forgejo commited, nicht lokal, anschliessend einen Pull Request erstellen
+4. Server-Lifecycle:
 - Claude startet und stoppt alle Dev-Server selbst
 - der User greift dafür nie manuell ein
 - nach Abschluss einer Aufgabe werden laufende Server gestoppt
