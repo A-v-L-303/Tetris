@@ -9,7 +9,7 @@ Anrede: Duzen
 ## Language
 - Answers in German, technical terms left in English
 
-## Forgejo Repository
+## Forgejo Repository (lokal)
 - Url: http://localhost:3000/alex/Tetris.git
 - Wiki: http://localhost:3000/alex/Tetris.wiki.git
 - Token: 0307b7a772f2ac8dce5f32a27a2121a400c7246c
