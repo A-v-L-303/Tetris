@@ -4,6 +4,8 @@ export class GameOverScreen {
   private readonly nameInput: HTMLInputElement;
   private readonly submitBtn: HTMLButtonElement;
   private readonly errorEl: HTMLElement;
+  private readonly nameFormEl: HTMLElement;
+  private readonly noQualifyEl: HTMLElement;
 
   constructor(
     container: HTMLElement,
@@ -15,6 +17,7 @@ export class GameOverScreen {
     this.el.innerHTML = `
       <h2 class="gameover-title">GAME OVER</h2>
       <p class="final-score"></p>
+      <p class="no-qualify-info"></p>
       <div class="name-form">
         <label class="name-label">Spielername (3–5 Zeichen):</label>
         <input class="name-input" type="text" maxlength="5" autocomplete="off" spellcheck="false" />
@@ -26,6 +29,8 @@ export class GameOverScreen {
     container.appendChild(this.el);
 
     this.scoreEl = this.el.querySelector('.final-score')!;
+    this.nameFormEl = this.el.querySelector('.name-form')!;
+    this.noQualifyEl = this.el.querySelector('.no-qualify-info')!;
     this.nameInput = this.el.querySelector('.name-input')!;
     this.submitBtn = this.el.querySelector('.submit-btn')!;
     this.errorEl = this.el.querySelector('.name-error')!;
@@ -47,12 +52,20 @@ export class GameOverScreen {
     this.el.querySelector('.menu-btn')!.addEventListener('click', onMenu);
   }
 
-  show(score: number, level: number, lines: number): void {
+  show(score: number, level: number, lines: number, qualifies: boolean): void {
     this.scoreEl.textContent = `Score: ${score.toLocaleString('de-DE')}  |  Level: ${level}  |  Reihen: ${lines}`;
     this.nameInput.value = '';
     this.errorEl.textContent = '';
     this.el.style.display = 'flex';
-    setTimeout(() => this.nameInput.focus(), 50);
+
+    if (qualifies) {
+      this.nameFormEl.style.display = '';
+      this.noQualifyEl.textContent = '';
+      setTimeout(() => this.nameInput.focus(), 50);
+    } else {
+      this.nameFormEl.style.display = 'none';
+      this.noQualifyEl.textContent = 'Score nicht in den Top 10 – kein Eintrag.';
+    }
   }
 
   hide(): void { this.el.style.display = 'none'; }
