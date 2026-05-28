@@ -14,14 +14,15 @@ Anrede: Duzen
 - Wiki: http://localhost:3000/alex/Tetris.wiki.git
 - Token: 0307b7a772f2ac8dce5f32a27a2121a400c7246c
 
-## Branches
-- für jede neue aufgabe wird ein neuer branch erzeugt
-- es wird immer in Forgejo commited, nicht lokal
-
-## Server-Lifecycle
+## Regeln
+Wenn du eine neue Aufgabe im Projekt startest musst Du diese Regeln beachten:
+1. für jede neue aufgabe wird IMMER ein neuer branch erzeugt
+2. es wird immer in Forgejo commited, nicht lokal
+3. Server-Lifecycle:
 - Claude startet und stoppt alle Dev-Server selbst
 - der User greift dafür nie manuell ein
 - nach Abschluss einer Aufgabe werden laufende Server gestoppt
+
 
 ## Authors
 - Alexander von Linden
