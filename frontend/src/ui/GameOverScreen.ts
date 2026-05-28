@@ -4,6 +4,7 @@ export class GameOverScreen {
   private readonly nameInput: HTMLInputElement;
   private readonly submitBtn: HTMLButtonElement;
   private readonly errorEl: HTMLElement;
+  private readonly nameFormEl: HTMLElement;
 
   constructor(
     container: HTMLElement,
@@ -26,6 +27,7 @@ export class GameOverScreen {
     container.appendChild(this.el);
 
     this.scoreEl = this.el.querySelector('.final-score')!;
+    this.nameFormEl = this.el.querySelector('.name-form')!;
     this.nameInput = this.el.querySelector('.name-input')!;
     this.submitBtn = this.el.querySelector('.submit-btn')!;
     this.errorEl = this.el.querySelector('.name-error')!;
@@ -47,12 +49,18 @@ export class GameOverScreen {
     this.el.querySelector('.menu-btn')!.addEventListener('click', onMenu);
   }
 
-  show(score: number, level: number, lines: number): void {
+  show(score: number, level: number, lines: number, qualifies: boolean): void {
     this.scoreEl.textContent = `Score: ${score.toLocaleString('de-DE')}  |  Level: ${level}  |  Reihen: ${lines}`;
     this.nameInput.value = '';
     this.errorEl.textContent = '';
     this.el.style.display = 'flex';
-    setTimeout(() => this.nameInput.focus(), 50);
+
+    if (qualifies) {
+      this.nameFormEl.style.display = '';
+      setTimeout(() => this.nameInput.focus(), 50);
+    } else {
+      this.nameFormEl.style.display = 'none';
+    }
   }
 
   hide(): void { this.el.style.display = 'none'; }

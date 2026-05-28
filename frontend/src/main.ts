@@ -5,7 +5,7 @@ import { Renderer } from './game/Renderer';
 import { MenuScreen } from './ui/MenuScreen';
 import { GameOverScreen } from './ui/GameOverScreen';
 import { HighscorePanel } from './ui/HighscorePanel';
-import { postHighscore } from './api/HighscoreApi';
+import { postHighscore, getHighscores, qualifiesForHighscore } from './api/HighscoreApi';
 
 function main(): void {
   const app = document.getElementById('app')!;
@@ -63,7 +63,16 @@ function main(): void {
         pendingLevel = level;
         pendingLines = lines;
         hideAll();
-        gameOverScreen.show(score, level, lines);
+        void (async () => {
+          let qualifies = true;
+          try {
+            const entries = await getHighscores(currentMode);
+            qualifies = qualifiesForHighscore(score, entries);
+          } catch {
+            // Bei Fehler: Eintrag erlauben, Backend entscheidet final
+          }
+          gameOverScreen.show(score, level, lines, qualifies);
+        })();
       },
     );
     engine.start();

@@ -55,6 +55,15 @@ router.post('/', (req: Request, res: Response): void => {
     return;
   }
 
+  const topEntries = db
+    .prepare(`SELECT score FROM highscores WHERE mode = ? ORDER BY score DESC LIMIT 10`)
+    .all(mode) as { score: number }[];
+
+  if (topEntries.length >= 10 && score <= (topEntries[topEntries.length - 1] as { score: number }).score) {
+    res.status(422).json({ error: 'Score qualifiziert sich nicht für die Top 10' });
+    return;
+  }
+
   const result = db
     .prepare(
       `INSERT INTO highscores (player_name, score, level, lines, mode)
